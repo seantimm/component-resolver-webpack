@@ -1,16 +1,16 @@
 var path = require('path');
 
 // Captures component id (e.g 'feedback_form' from 'feedback/feedback_form').
-var COMPONENT_ID_PATTERN = /([^\/]+)$/;
+var COMPONENT_ID_PATTERN = path.sep === '/' ? /([^\/]+)$/ : /([^\\]+)$/;
 
 // Captures enclosing dir
 // (e.g '_fixtures/dir_with_file_and_component' from
 // '_fixtures/dir_with_file_and_component/component')
-var ENCLOSING_DIR_PATTERN = /(.+)\/.+$/;
+var ENCLOSING_DIR_PATTERN = path.sep === '/' ? /(.+)\/.+$/ : /(.+)\\.+$/;
 
 var getResolveComponent = function(exts) {
   return function(request, callback) {
-    var enclosingDirPath = path.join(request.path, request.request || '');
+    var enclosingDirPath = path.resolve(request.path, request.request || '');
     var captured = enclosingDirPath.match(COMPONENT_ID_PATTERN);
 
     // Ignore npm modules
@@ -82,4 +82,3 @@ ComponentResolverPlugin.prototype.apply = function(resolver) {
 };
 
 module.exports = ComponentResolverPlugin;
-
